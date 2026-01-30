@@ -249,7 +249,7 @@
             </h2>
             <p class="text-gray-400 mb-10 text-lg">
                 ¿Cómo te sientes o qué estás haciendo? (Ej: "Afterparty oscuro", "Sunset en la playa", "Entrenando duro", "Relax en casa").
-                Te recomendaré un track de mi colección personal.
+                Te recomendaré un track, su sello y artistas similares.
             </p>
 
             <!-- Input Area -->
@@ -266,8 +266,9 @@
                 <div class="bg-gray-900/80 backdrop-blur-xl border border-brand-purple/30 p-8 rounded-2xl shadow-2xl relative overflow-hidden group">
                     <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-brand-purple to-brand-accent"></div>
                     
-                    <div class="mb-4">
+                    <div class="mb-4 flex justify-between items-center">
                         <span class="text-xs font-bold text-gray-500 uppercase tracking-widest">Recomendación para ti</span>
+                        <span id="resLabel" class="text-xs font-bold bg-brand-purple/20 text-brand-purple px-2 py-1 rounded">Label Name</span>
                     </div>
                     
                     <h3 id="resTrackName" class="text-3xl font-display font-black text-white mb-1 leading-tight">Track Name</h3>
@@ -283,6 +284,11 @@
                             <span id="resGenre" class="text-lg text-white">Deep Tech</span>
                         </div>
                     </div>
+                    
+                    <div class="mb-6 text-left">
+                        <span class="text-xs text-gray-500 uppercase tracking-widest block mb-2">Artistas Similares / Relacionados:</span>
+                        <p id="resSimilar" class="text-sm text-gray-300 italic">Artist 1, Artist 2, Artist 3</p>
+                    </div>
 
                     <a href="https://www.youtube.com/results?search_query=minimal+deep+tech" target="_blank" id="searchLink" class="inline-flex items-center text-gray-300 hover:text-white transition text-sm hover:underline">
                         <i class="fab fa-youtube mr-2 text-red-500"></i> Buscar en YouTube
@@ -294,22 +300,58 @@
 
     <!-- Script for Music Recommender -->
     <script>
-        // Base de datos simulada de tracks estilo Lu Bass
+        // Base de datos ACTUALIZADA y EXPANDIDA con carpetas y sellos
         const trackDatabase = [
-            { keywords: ['fiesta', 'bailar', 'club', 'noche', 'energia', 'party'], producer: 'Chris Stussy', track: 'All Night Long', bpm: 128, genre: 'Deep House' },
-            { keywords: ['oscuro', 'after', 'mente', 'viaje', 'dark', 'trip'], producer: 'Mihai Pol', track: 'Gonon', bpm: 124, genre: 'Micro House' },
-            { keywords: ['relax', 'estudiar', 'casa', 'calma', 'chill', 'domingo'], producer: 'Traumer', track: 'Hoodlum', bpm: 126, genre: 'Minimal Deep' },
-            { keywords: ['playa', 'sol', 'sunset', 'tarde', 'verano', 'calor'], producer: 'Sweely', track: 'Stronger Than Me', bpm: 129, genre: 'Minimal House' },
-            { keywords: ['gym', 'entrenar', 'correr', 'fuerte', 'power'], producer: 'Toman', track: 'Fantanized', bpm: 130, genre: 'Tech House' },
-            { keywords: ['groove', 'tech', 'minimal', 'vibe'], producer: 'iO (Mulen)', track: 'Stick Out', bpm: 127, genre: 'Minimal Tech' },
-            { keywords: ['deep', 'profundo', 'warm'], producer: 'Prunk', track: 'Through The Walls', bpm: 125, genre: 'Deep Tech' }
+            // --- MICRO HOUSE / MINIMAL / ATMOSFERAS (Folder: Atmosferas, Casa 22, Atmosferas VL) ---
+            { keywords: ['viaje', 'mental', 'after', 'profundo', 'romania', 'minimal', 'atmosfera'], producer: 'Bucurie', track: 'Music In Her Soul', bpm: 124, genre: 'Micro House', label: 'Sono Unica', similar: 'Sepp, Nu Zau, Herodot' },
+            { keywords: ['espacial', 'trippy', 'galactico', 'havvoc', 'fly'], producer: 'Havvoc', track: 'Galactical Boobs', bpm: 125, genre: 'Minimal Deep', label: 'Particular', similar: 'Cosmjn, Lizz, Barac' },
+            { keywords: ['jungla', 'naturaleza', 'organico'], producer: 'Havvoc', track: 'Jungla Fascinanta', bpm: 124, genre: 'Minimal', label: 'Particular', similar: 'Mihai Pol, Vlf' },
+            { keywords: ['elegante', 'fino', 'amanecer', 'rominimal'], producer: 'Sublee', track: 'Aprilie', bpm: 123, genre: 'Micro House', label: 'Metereze', similar: 'Raresh, Petre Inspirescu, Rhadoo ([a:rpia:r])' },
+            { keywords: ['live', 'modular', 'organico', 'jazz', 'wareika'], producer: 'Wareika', track: 'Bolero', bpm: 122, genre: 'Organic Minimal', label: 'Perlon', similar: 'Zip, Margaret Dygas, Fumiya Tanaka' },
+            { keywords: ['noche', 'club', 'berlin'], producer: 'Wareika', track: 'A Night At Hoppetosse', bpm: 124, genre: 'Minimal', label: 'Visionquest', similar: 'Seth Troxler, Shaun Reeves' },
+            { keywords: ['hipnotico', 'largo', 'villalobos', 'clasico', 'afterparty'], producer: 'Ricardo Villalobos', track: '808 The Bassqueen', bpm: 128, genre: 'Minimal Techno', label: 'Perlon', similar: 'Luciano, Zip, Richie Hawtin' },
+            { keywords: ['floog', 'energia', 'live set', 'bouncy'], producer: 'Floog', track: 'Tundra', bpm: 126, genre: 'Minimal', label: 'Hoarder', similar: 'iO (Mulen), Triptil, Janeret' },
+            { keywords: ['deep', 'tech', 'london', 'fuse'], producer: 'Enzo Siragusa', track: 'Desire', bpm: 127, genre: 'Deep Tech', label: 'Fuse London', similar: 'Rich NxT, Seb Zito, Archie Hamilton' },
+            { keywords: ['sylvester', 'minimal', 'house 24'], producer: 'Sylvester', track: '004A1', bpm: 128, genre: 'Minimal House', label: 'TooneyLunes', similar: 'Sweely, Huerta' },
+
+            // --- DEEP HOUSE / NU DISCO / CLASSY (Folder: Deep, Caroladas, Deep feb 23) ---
+            { keywords: ['disco', 'funky', 'feliz', 'warmup', 'vocal', 'carolada'], producer: 'COEO', track: 'Mydonna', bpm: 124, genre: 'Nu Disco', label: 'Toy Tonics', similar: 'Kapote, Mangabey, Cody Currie' },
+            { keywords: ['clasico', 'emocion', 'soul', 'detroit'], producer: 'Octave One', track: 'Black Water', bpm: 126, genre: 'Detroit House', label: '430 West', similar: 'Inner City, Kevin Saunderson' },
+            { keywords: ['piano', 'house', 'oldschool', 'qubiko'], producer: 'Qubiko', track: 'Mono Tono', bpm: 125, genre: 'House', label: 'Defected', similar: 'Sam Divine, Ferreck Dawn' },
+            { keywords: ['viaje', 'melodia', 'stussy', 'piv'], producer: 'Chris Stussy', track: 'Seeing & Believing', bpm: 128, genre: 'Deep House', label: 'PIV Records', similar: 'Prunk, DJOKO, Kolter, Toman' },
+            { keywords: ['conducir', 'noche', 'relax', 'stussy'], producer: 'Chris Stussy', track: 'Evening Drive', bpm: 126, genre: 'Deep House', label: 'Up The Stuss', similar: 'Sidney Charles, East End Dubs' },
+            { keywords: ['frances', 'elegante', 'lauren', 'oden'], producer: 'Oden & Fatzo', track: 'Lauren', bpm: 128, genre: 'House', label: 'No Art', similar: 'ANOTR, Toman, Rossi.' },
+            { keywords: ['jazz', 'profundo', 'new zealand'], producer: 'Chaos in the CBD', track: 'Brainstorm', bpm: 124, genre: 'Deep House', label: 'In Dust We Trust', similar: 'Hidden Spheres, Harrison BDP' },
+            { keywords: ['leyenda', 'maestro', 'vega'], producer: 'Louie Vega', track: 'Let It Go', bpm: 125, genre: 'Soulful House', label: 'Defected', similar: 'Masters At Work, Kerri Chandler' },
+            { keywords: ['verano', 'calor', '90s', 'st david'], producer: 'St. David', track: 'Summer Nights Fall', bpm: 126, genre: '90s House', label: 'Chiwax', similar: 'Cinthie, Giammarco Orsini' },
+            { keywords: ['anotr', 'no art', 'trip'], producer: 'ANOTR', track: 'On A Trip', bpm: 128, genre: 'Minimal House', label: 'No Art', similar: 'Mateo Dufour, Toman, Luuk van Dijk' },
+            { keywords: ['kolter', 'breakbeat', 'cool'], producer: 'Kolter', track: 'Always Talkin Sh!T', bpm: 127, genre: 'Minimal House', label: 'PIV', similar: 'Chris Stussy, Prunk' },
+
+            // --- TECH HOUSE / GROOVE / NEUTRONIC (Folder: Neutronic, MDT, Junio, Abril) ---
+            { keywords: ['fiesta', 'bailar', 'club', 'hit', 'jamie'], producer: 'Jamie Jones', track: 'My Paradise', bpm: 128, genre: 'Tech House', label: 'Hot Creations', similar: 'The Martinez Brothers, Lee Foss, Richy Ahmed' },
+            { keywords: ['groove', 'rolling', 'bajo', 'tech', 'italiano', 'proudly'], producer: 'Proudly People', track: 'Funky Love', bpm: 129, genre: 'Minimal Tech', label: 'Moon Harbour', similar: 'Matthias Tanzmann, Dennis Cruz' },
+            { keywords: ['latino', 'percusion', 'chile', 'aldo'], producer: 'Aldo Cadiz', track: 'Corte Ficha', bpm: 127, genre: 'Tech House/Latin', label: 'Desolat', similar: 'Francisco Allendes, Loco Dice' },
+            { keywords: ['uk', 'bass', 'serio', 'bomba'], producer: 'Mike Morrisey', track: 'Key Lime Pie', bpm: 130, genre: 'Minimal Tech', label: 'Libero', similar: 'Luke Dean, Max Dean' },
+            { keywords: ['esclavos', 'ritmo', 'reelow', 'moan'], producer: 'Reelow', track: 'Game Of Slaves', bpm: 128, genre: 'Tech House', label: 'Moan', similar: 'Artslaves, Yaya, wAFF' },
+            { keywords: ['blackchild', 'solid grooves', 'italia'], producer: 'Blackchild (ITA)', track: 'Sexy Thing', bpm: 128, genre: 'Tech House', label: 'Solid Grooves', similar: 'Michael Bibi, PAWSA, Dennis Cruz, Eddy M' },
+            { keywords: ['blackchild', 'jazz', 'vocal'], producer: 'Blackchild (ITA)', track: 'Jazz Ensemble', bpm: 126, genre: 'Minimal House', label: 'Solid Grooves', similar: 'ANOTR, Classmatic' },
+            { keywords: ['manda', 'mood', 'climax'], producer: 'Manda Moor', track: 'The Climax', bpm: 128, genre: 'Minimal House', label: 'Hot Creations', similar: 'Sirus Hood, Jamie Jones' },
+            { keywords: ['holanda', 'dijk', 'fruta'], producer: 'Luuk van Dijk', track: 'Fruitless', bpm: 127, genre: 'Tech House', label: 'Dark Side Of The Sun', similar: 'Ben Sterling, Sidney Charles' },
+            { keywords: ['waff', 'hipnotico', 'mesmerized'], producer: 'wAFF', track: 'Mesmerized', bpm: 129, genre: 'Tech House', label: 'Nature', similar: 'Latmun, Detlef' },
+            { keywords: ['beltran', 'brasil', 'funk'], producer: 'Beltran (BR)', track: 'Smack Yo', bpm: 128, genre: 'Tech House', label: 'Solid Grooves', similar: 'Classmatic, Harvy Valencia' },
+            { keywords: ['tomi', 'kesh', 'kaluki'], producer: 'Tomi & Kesh', track: 'Diva', bpm: 128, genre: 'Tech House', label: 'Kaluki', similar: 'Alessandro Diruggiero, Bassel Darwish' },
+            { keywords: ['vintage', 'remix', 'grande'], producer: 'Vintage Culture', track: 'Rock The Kasbah', bpm: 126, genre: 'Tech House', label: 'Catch & Release', similar: 'Fisher, John Summit' },
+            { keywords: ['cuff', 'g-house', 'amine'], producer: 'Amine Edge & DANCE', track: 'Halfway Crooks', bpm: 124, genre: 'G-House', label: 'CUFF', similar: 'Shiba San, Clyde P, Tim Baresko' },
+            { keywords: ['nacho', 'scoppa', 'argentina'], producer: 'Nacho Scoppa', track: 'Ibiza Vibes', bpm: 127, genre: 'Minimal Deep', label: 'Deeperfect', similar: 'Stefano Noferini, Leonardo Gonnelli' }
         ];
 
         // Tracks por defecto si no hay coincidencia
         const defaultTracks = [
-            { producer: 'Enzo Siragusa', track: 'Sagamore', bpm: 128, genre: 'Minimal' },
-            { producer: 'Pawsa', track: 'The Groovy Cat', bpm: 126, genre: 'Tech House' },
-            { producer: 'Michael Bibi', track: 'Hanging Tree', bpm: 127, genre: 'Tech House' }
+            { producer: 'Enzo Siragusa', track: 'Sagamore', bpm: 128, genre: 'Minimal', label: 'Fuse', similar: 'Seb Zito, Rich NxT' },
+            { producer: 'Traumer', track: 'Hoodlum', bpm: 126, genre: 'Minimal Deep', label: 'Gettraum', similar: 'Djebali, iO (Mulen)' },
+            { producer: 'Michael Bibi', track: 'Hanging Tree', bpm: 127, genre: 'Tech House', label: 'Solid Grooves', similar: 'PAWSA, Blackchild' },
+            { producer: 'Chris Stussy', track: 'All Night Long', bpm: 128, genre: 'Deep House', label: 'PIV', similar: 'Prunk, DJOKO' },
+            { producer: 'Jamie Jones', track: 'My Paradise', bpm: 128, genre: 'Tech House', label: 'Hot Creations', similar: 'Lee Foss' }
         ];
 
         function recommendMusic() {
@@ -319,6 +361,8 @@
             const resProd = document.getElementById('resProducer');
             const resBpm = document.getElementById('resBpm');
             const resGenre = document.getElementById('resGenre');
+            const resLabel = document.getElementById('resLabel');
+            const resSimilar = document.getElementById('resSimilar');
             const searchLink = document.getElementById('searchLink');
 
             if (!input) {
@@ -354,6 +398,8 @@
             resProd.innerText = match.producer;
             resBpm.innerText = match.bpm;
             resGenre.innerText = match.genre;
+            resLabel.innerText = match.label;
+            resSimilar.innerText = match.similar;
             
             // Update search link
             searchLink.href = `https://www.youtube.com/results?search_query=${encodeURIComponent(match.producer + " " + match.track)}`;
